@@ -4,6 +4,12 @@ using ObsidianIQ.FormsAPI.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure URLs for production deployment
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5000");
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -20,7 +26,9 @@ builder.Services.AddCors(options =>
                 "http://localhost:5000",
                 "https://localhost:7000", 
                 "https://obsidianiq.com", 
-                "https://www.obsidianiq.com")
+                "https://www.obsidianiq.com",
+                "http://0.0.0.0:5000"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
