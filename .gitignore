@@ -6,4 +6,12 @@ obj/
 .vscode/
 *.log
 appsettings.Production.json
+appsettings.Staging.json
+appsettings.Local.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
 .env
+.env.local
+.env.production
+secrets.json
