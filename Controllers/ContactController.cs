@@ -73,5 +73,15 @@ namespace ObsidianIQ.FormsAPI.Controllers
         {
             return Ok(new { status = "healthy", service = "contact-form" });
         }
+
+        /// <summary>
+        /// Handle preflight OPTIONS requests for CORS
+        /// </summary>
+        /// <returns>OK response for preflight</returns>
+        [HttpOptions]
+        public IActionResult HandleOptions()
+        {
+            return Ok();
+        }
     }
 }
