@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure URLs for production deployment
 if (builder.Environment.IsProduction())
 {
-    builder.WebHost.UseUrls("http://0.0.0.0:5000");
+    builder.WebHost.UseUrls("http://127.0.0.1:5000");
 }
 
 // Add services to the container.
