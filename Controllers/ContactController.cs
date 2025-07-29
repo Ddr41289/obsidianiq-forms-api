@@ -20,10 +20,10 @@ namespace ObsidianIQ.FormsAPI.Controllers
         /// <summary>
         /// Submit a contact form
         /// </summary>
-        /// <param name="contactForm">The contact form data</param>
+        /// <param name="model">The contact form data</param>
         /// <returns>Form submission response</returns>
         [HttpPost]
-        public async Task<ActionResult<FormSubmissionResponse>> SubmitContactForm([FromBody] ContactFormModel contactForm)
+        public async Task<IActionResult> SubmitForm([FromBody] ContactFormModel model)
         {
             try
             {
@@ -32,17 +32,17 @@ namespace ObsidianIQ.FormsAPI.Controllers
 
                 // Debug logging to see what data is received
                 _logger.LogInformation("Received Contact Form Data:");
-                _logger.LogInformation("  ServiceRequested: '{ServiceRequested}'", contactForm.ServiceRequested ?? "NULL");
-                _logger.LogInformation("  FullName: '{FullName}'", contactForm.FullName ?? "NULL");
-                _logger.LogInformation("  Email: '{Email}'", contactForm.Email ?? "NULL");
-                _logger.LogInformation("  PhoneNumber: '{PhoneNumber}'", contactForm.PhoneNumber ?? "NULL");
-                _logger.LogInformation("  CompanyName: '{CompanyName}'", contactForm.CompanyName ?? "NULL");
-                _logger.LogInformation("  Position: '{Position}'", contactForm.Position ?? "NULL");
-                _logger.LogInformation("  Country: '{Country}'", contactForm.Country ?? "NULL");
-                _logger.LogInformation("  StateProvince: '{StateProvince}'", contactForm.StateProvince ?? "NULL");
-                _logger.LogInformation("  Message: '{Message}'", contactForm.Message ?? "NULL");
+                _logger.LogInformation("  ServiceRequested: '{ServiceRequested}'", model.ServiceRequested ?? "NULL");
+                _logger.LogInformation("  FullName: '{FullName}'", model.FullName ?? "NULL");
+                _logger.LogInformation("  Email: '{Email}'", model.Email ?? "NULL");
+                _logger.LogInformation("  PhoneNumber: '{PhoneNumber}'", model.PhoneNumber ?? "NULL");
+                _logger.LogInformation("  CompanyName: '{CompanyName}'", model.CompanyName ?? "NULL");
+                _logger.LogInformation("  Position: '{Position}'", model.Position ?? "NULL");
+                _logger.LogInformation("  Country: '{Country}'", model.Country ?? "NULL");
+                _logger.LogInformation("  StateProvince: '{StateProvince}'", model.StateProvince ?? "NULL");
+                _logger.LogInformation("  Message: '{Message}'", model.Message ?? "NULL");
 
-                var response = await _formService.ProcessContactFormAsync(contactForm);
+                var response = await _formService.ProcessContactFormAsync(model);
 
                 if (response.Success)
                 {

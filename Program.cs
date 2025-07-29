@@ -68,6 +68,7 @@ var app = builder.Build();
 
 // Get CORS policy from configuration
 var corsPolicy = builder.Configuration.GetValue<string>("CorsPolicy") ?? "DevelopmentCORS";
+Console.WriteLine($"Using CORS policy: {corsPolicy}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

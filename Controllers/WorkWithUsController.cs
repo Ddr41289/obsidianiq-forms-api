@@ -5,7 +5,7 @@ using ObsidianIQ.FormsAPI.Services;
 namespace ObsidianIQ.FormsAPI.Controllers
 {
     [ApiController]
-    [Route("api/work-with-us")]
+    [Route("api/[controller]")]
     public class WorkWithUsController : ControllerBase
     {
         private readonly IFormService _formService;
@@ -20,10 +20,10 @@ namespace ObsidianIQ.FormsAPI.Controllers
         /// <summary>
         /// Submit a work with us form
         /// </summary>
-        /// <param name="workWithUsForm">The work with us form data</param>
+        /// <param name="model">The work with us form data</param>
         /// <returns>Form submission response</returns>
         [HttpPost]
-        public async Task<ActionResult<FormSubmissionResponse>> SubmitWorkWithUsForm([FromBody] WorkWithUsFormModel workWithUsForm)
+        public async Task<IActionResult> SubmitForm([FromBody] WorkWithUsFormModel model)
         {
             try
             {
@@ -32,14 +32,14 @@ namespace ObsidianIQ.FormsAPI.Controllers
 
                 // Debug logging to see what data is received
                 _logger.LogInformation("Received Work With Us Form Data:");
-                _logger.LogInformation("  FirstName: '{FirstName}'", workWithUsForm.FirstName ?? "NULL");
-                _logger.LogInformation("  LastName: '{LastName}'", workWithUsForm.LastName ?? "NULL");
-                _logger.LogInformation("  Email: '{Email}'", workWithUsForm.Email ?? "NULL");
-                _logger.LogInformation("  PhoneNumber: '{PhoneNumber}'", workWithUsForm.PhoneNumber ?? "NULL");
-                _logger.LogInformation("  Message: '{Message}'", workWithUsForm.Message ?? "NULL");
-                _logger.LogInformation("  HasResume: '{HasResume}'", workWithUsForm.HasResume);
+                _logger.LogInformation("  FirstName: '{FirstName}'", model.FirstName ?? "NULL");
+                _logger.LogInformation("  LastName: '{LastName}'", model.LastName ?? "NULL");
+                _logger.LogInformation("  Email: '{Email}'", model.Email ?? "NULL");
+                _logger.LogInformation("  PhoneNumber: '{PhoneNumber}'", model.PhoneNumber ?? "NULL");
+                _logger.LogInformation("  Message: '{Message}'", model.Message ?? "NULL");
+                _logger.LogInformation("  HasResume: '{HasResume}'", model.HasResume);
 
-                var response = await _formService.ProcessWorkWithUsFormAsync(workWithUsForm);
+                var response = await _formService.ProcessWorkWithUsFormAsync(model);
 
                 if (response.Success)
                 {
