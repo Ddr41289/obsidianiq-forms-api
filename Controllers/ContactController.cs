@@ -5,7 +5,7 @@ using ObsidianIQ.FormsAPI.Services;
 namespace ObsidianIQ.FormsAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/contact-us")]
     public class ContactController : ControllerBase
     {
         private readonly IFormService _formService;
