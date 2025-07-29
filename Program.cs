@@ -29,8 +29,9 @@ builder.Services.AddCors(options =>
                 "http://127.0.0.1:8000"   // For local development
             )
             .WithMethods("GET", "POST", "OPTIONS")
-            .WithHeaders("Content-Type", "Accept", "Authorization")
-            .AllowCredentials();
+            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
+            .AllowCredentials()
+            .SetPreflightMaxAge(TimeSpan.FromMinutes(10)); // Cache preflight for 10 minutes
     });
     
     // Development policy - more permissive for local testing
@@ -80,8 +81,47 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseHttpsRedirection();
+    // Configure for production with reverse proxy
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+                          Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+    });
+    
+    // Only redirect to HTTPS if the request isn't already HTTPS
+    // This prevents 301 redirects on preflight requests from NGINX
+    app.Use(async (context, next) =>
+    {
+        if (!context.Request.IsHttps && 
+            context.Request.Method != "OPTIONS" && 
+            !context.Request.Headers.ContainsKey("X-Forwarded-Proto"))
+        {
+            var httpsUrl = $"https://{context.Request.Host}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+            context.Response.Redirect(httpsUrl, permanent: true);
+            return;
+        }
+        await next();
+    });
 }
+
+// Handle OPTIONS requests globally BEFORE CORS middleware
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        // Let CORS middleware handle the response headers
+        await next();
+        
+        // Ensure we return 200 OK for preflight requests
+        if (!context.Response.HasStarted)
+        {
+            context.Response.StatusCode = 200;
+            await context.Response.CompleteAsync();
+        }
+        return;
+    }
+    await next();
+});
 
 // Use configured CORS policy
 app.UseCors(corsPolicy);
