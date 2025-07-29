@@ -15,44 +15,43 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS
+// Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowObsidianIQFrontend", builder =>
+    // Production policy - specific origins for security
+    options.AddPolicy("AllowObsidianIQFrontend", policy =>
     {
-        builder
-            .WithOrigins(
-                "http://localhost:3000", 
-                "http://localhost:5000",
-                "https://localhost:7000", 
-                "https://obsidianiq.com", 
-                "https://www.obsidianiq.com",
-                "http://0.0.0.0:5000"
+        policy.WithOrigins(
+                "https://www.obsidian-iq.com",
+                "https://obsidian-iq.com",
+                "http://localhost:3000",  // For local development
+                "http://localhost:8000",  // For local development
+                "http://127.0.0.1:8000"   // For local development
             )
-            .AllowAnyMethod()
-            .AllowAnyHeader()
+            .WithMethods("GET", "POST", "OPTIONS")
+            .WithHeaders("Content-Type", "Accept", "Authorization")
             .AllowCredentials();
     });
     
-    // Add a more permissive policy for development
-    options.AddPolicy("DevelopmentCORS", builder =>
+    // Development policy - more permissive for local testing
+    options.AddPolicy("DevelopmentCORS", policy =>
     {
-        builder
-            .SetIsOriginAllowed(origin => 
+        policy.SetIsOriginAllowed(origin => 
                 origin.StartsWith("http://localhost") || 
-                origin.StartsWith("https://localhost"))
-            .AllowAnyMethod()
-            .AllowAnyHeader()
+                origin.StartsWith("https://localhost") ||
+                origin.StartsWith("http://127.0.0.1") ||
+                origin.StartsWith("http://0.0.0.0"))
+            .WithMethods("GET", "POST", "OPTIONS")
+            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
             .AllowCredentials();
     });
     
-    // Add wildcard policy for maximum flexibility (use with caution)
-    options.AddPolicy("AllowAllOrigins", builder =>
+    // Fallback policy for maximum compatibility (development only)
+    options.AddPolicy("AllowAllOrigins", policy =>
     {
-        builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        policy.AllowAnyOrigin()
+            .WithMethods("GET", "POST", "OPTIONS")
+            .WithHeaders("Content-Type", "Accept", "Authorization");
             // Note: Cannot use .AllowCredentials() with .AllowAnyOrigin()
     });
 });
