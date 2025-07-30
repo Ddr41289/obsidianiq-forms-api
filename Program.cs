@@ -4,10 +4,15 @@ using ObsidianIQ.FormsAPI.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure URLs for production deployment
+// Configure URLs based on environment
 if (builder.Environment.IsProduction())
 {
     builder.WebHost.UseUrls("http://127.0.0.1:5000");
+}
+else if (builder.Environment.IsDevelopment())
+{
+    // Configure HTTPS for local development
+    builder.WebHost.UseUrls("https://localhost:5000");
 }
 
 // Add services to the container.
@@ -24,9 +29,12 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "https://www.obsidian-iq.com",
                 "https://obsidian-iq.com",
-                "http://localhost:3000",  // For local development
-                "http://localhost:8000",  // For local development
-                "http://127.0.0.1:8000"   // For local development
+                "http://localhost:3000",   // For local development
+                "https://localhost:3000",  // For local development HTTPS
+                "http://localhost:8000",   // For local development
+                "https://localhost:8000",  // For local development HTTPS
+                "http://127.0.0.1:8000",   // For local development
+                "https://localhost:5000"   // For API development HTTPS
             )
             .WithMethods("GET", "POST", "OPTIONS")
             .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
@@ -41,6 +49,7 @@ builder.Services.AddCors(options =>
                 origin.StartsWith("http://localhost") || 
                 origin.StartsWith("https://localhost") ||
                 origin.StartsWith("http://127.0.0.1") ||
+                origin.StartsWith("https://127.0.0.1") ||
                 origin.StartsWith("http://0.0.0.0"))
             .WithMethods("GET", "POST", "OPTIONS")
             .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
