@@ -75,6 +75,31 @@ builder.Services.AddValidatorsFromAssemblyContaining<ContactFormValidator>();
 
 var app = builder.Build();
 
+// Validate critical configuration in production
+if (app.Environment.IsProduction())
+{
+    var smtpUsername = builder.Configuration["EmailSettings:SmtpUsername"];
+    var smtpPassword = builder.Configuration["EmailSettings:SmtpPassword"];
+    
+    if (string.IsNullOrEmpty(smtpUsername))
+    {
+        app.Logger.LogWarning("EmailSettings:SmtpUsername environment variable is not set!");
+    }
+    else
+    {
+        app.Logger.LogInformation("EmailSettings:SmtpUsername is configured (length: {Length})", smtpUsername.Length);
+    }
+    
+    if (string.IsNullOrEmpty(smtpPassword))
+    {
+        app.Logger.LogWarning("EmailSettings:SmtpPassword environment variable is not set!");
+    }
+    else
+    {
+        app.Logger.LogInformation("EmailSettings:SmtpPassword is configured (length: {Length})", smtpPassword.Length);
+    }
+}
+
 // Get CORS policy from configuration
 var corsPolicy = builder.Configuration.GetValue<string>("CorsPolicy") ?? "DevelopmentCORS";
 Console.WriteLine($"Using CORS policy: {corsPolicy}");
