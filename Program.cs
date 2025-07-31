@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
                 "https://localhost:5000"   // For API development HTTPS
             )
             .WithMethods("GET", "POST", "OPTIONS")
-            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
+            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With", "Access-Control-Allow-Origin")
             .AllowCredentials()
             .SetPreflightMaxAge(TimeSpan.FromMinutes(10)); // Cache preflight for 10 minutes
     });
@@ -52,7 +52,7 @@ builder.Services.AddCors(options =>
                 origin.StartsWith("https://127.0.0.1") ||
                 origin.StartsWith("http://0.0.0.0"))
             .WithMethods("GET", "POST", "OPTIONS")
-            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With")
+            .WithHeaders("Content-Type", "Accept", "Authorization", "X-Requested-With", "Access-Control-Allow-Origin")
             .AllowCredentials();
     });
     
