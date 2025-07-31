@@ -10,11 +10,16 @@ namespace ObsidianIQ.FormsAPI.Controllers
     {
         private readonly IFormService _formService;
         private readonly ILogger<ContactController> _logger;
+        private readonly ObsidianIQ.FormsAPI.Models.EmailSettings _emailSettings;
 
-        public ContactController(IFormService formService, ILogger<ContactController> logger)
+        public ContactController(
+            IFormService formService,
+            ILogger<ContactController> logger,
+            Microsoft.Extensions.Options.IOptions<ObsidianIQ.FormsAPI.Models.EmailSettings> emailSettings)
         {
             _formService = formService;
             _logger = logger;
+            _emailSettings = emailSettings.Value;
         }
 
         /// <summary>
@@ -41,6 +46,15 @@ namespace ObsidianIQ.FormsAPI.Controllers
                 _logger.LogInformation("  Country: '{Country}'", model.Country ?? "NULL");
                 _logger.LogInformation("  StateProvince: '{StateProvince}'", model.StateProvince ?? "NULL");
                 _logger.LogInformation("  Message: '{Message}'", model.Message ?? "NULL");
+
+                // Example usage of _emailSettings to build SMTP client
+                // (Replace this with your actual email sending logic as needed)
+                using var smtpClient = new System.Net.Mail.SmtpClient(_emailSettings.SmtpHost, _emailSettings.SmtpPort)
+                {
+                    EnableSsl = _emailSettings.EnableSsl,
+                    Credentials = new System.Net.NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword)
+                };
+                // You can now use smtpClient to send emails as needed
 
                 var response = await _formService.ProcessContactFormAsync(model);
 

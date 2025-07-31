@@ -3,6 +3,8 @@ using ObsidianIQ.FormsAPI.Services;
 using ObsidianIQ.FormsAPI.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
+// Bind EmailSettings from configuration and register in DI
+builder.Services.Configure<ObsidianIQ.FormsAPI.Models.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 // Configure URLs based on environment
 if (builder.Environment.IsProduction())
